@@ -20,7 +20,8 @@ from core.views import HomeTemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", HomeTemplateView.as_view(),name="home")
+    path("", HomeTemplateView.as_view(),name="home"),
+    path("core/", include('core.urls', namespace="core")),
 ]
 
 urlpatterns += [
