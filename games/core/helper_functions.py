@@ -38,3 +38,20 @@ def import_games(file):
             team2=team2,
             team2_score=row[3]
         )
+
+
+# this function will be removed or used in a view
+def get_score():
+    teams = Team.objects.all()
+    scores = dict.fromkeys(teams, 0)
+    games = Game.objects.all()
+    for game in games:
+        if game.team1_score == game.team2_score:
+            scores[game.team1] += 1
+            scores[game.team2] += 1
+        elif game.team1_score > game.team2_score:
+            scores[game.team1] += 3
+        else:
+            scores[game.team2] += 3
+
+    return scores
