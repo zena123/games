@@ -1,0 +1,25 @@
+{% load vue_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <meta charset="utf-8"/>
+    <title> games </title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+{% block content %}
+
+{% endblock %}
+
+</body>
+
+{% vue_starter %}
+</html>
