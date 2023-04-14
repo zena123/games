@@ -6,6 +6,9 @@ class Team(models.Model):
     """add team """
     name = models.CharField(max_length=200, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Game(models.Model):
     """add game class"""
@@ -17,5 +20,8 @@ class Game(models.Model):
     class Meta:
         verbose_name = _("Game")
         verbose_name_plural = _("Games")
+
+    def __str__(self):
+        return self.team1.name + self.team2.name
 
 
