@@ -20,7 +20,7 @@ class HomeTemplateView(TemplateView):
 
 
 class HandleUploadView(APIView):
-    permission_classes = (AllowAny)
+    permission_classes = (AllowAny, )
 
     def post(self, request, format=None):
         serializer = HandleUploadSerializer(data=request.data)

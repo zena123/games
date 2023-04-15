@@ -14,10 +14,11 @@
                         <label for="name" class="control-label">Upload csv file </label>
                         <div class="col-md-5">
                             <validation-provider name="csv_file" rules="required"
-                                                            v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
-                                                            class="form-group">
-                            <input type="file" name="csv_file" id="csv_file"  class="form-control">
-                                <span v-for="error in errors" :key="error" class="invalid-feedback" style="display: inline">{( error )}</span>
+                                                 v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
+                                                 class="form-group">
+                                <input type="file" name="csv_file" id="csv_file" class="form-control">
+                                <span v-for="error in errors" :key="error" class="invalid-feedback"
+                                      style="display: inline">{( error )}</span>
                             </validation-provider>
                         </div>
                     </div>
@@ -34,7 +35,17 @@
 
         <div>
             <a href="">
-            <button class="btn-default">show score</button></a>
+                <button class="btn-default">show score</button>
+            </a>
+
+            <br>
+
         </div>
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        {% include 'upload_file.js' %}
+    </script>
 {% endblock %}
