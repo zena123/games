@@ -37,9 +37,42 @@
             <a href="">
                 <button class="btn-default">show score</button>
             </a>
-
             <br>
-
+            <div style="width: 50%; padding-left: 100px">
+                <table class="table" >
+                    <thead>
+                    <tr>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Team</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td><button type="button" class="btn btn-outline-primary">update</button>
+                            <button type="button" class="btn btn-outline-danger">delete</button></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td><button type="button" class="btn btn-outline-primary">update</button>
+                            <button type="button" class="btn btn-outline-danger">delete</button></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td >Larry</td>
+                        <td><input type="text" value="test"></td>
+                        <td><button type="button" class="btn btn-outline-primary">update</button>
+                            <button type="button" class="btn btn-outline-danger">delete</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 {% endblock %}
