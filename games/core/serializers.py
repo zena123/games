@@ -21,11 +21,11 @@ class HandleUploadSerializer(serializers.Serializer):
     """ get uploaded file and call function to import data"""
     csv_file = FileField(style={"upload_url": reverse_lazy("csv_upload")})
 
-    def save(self, **kwargs):
-        file = self.validated_data['csv_file']
-        import_teams(file)
-        import_games(file)
-        return super(HandleUploadSerializer, self).save(**kwargs)
+    def create(self, validated_data):
+        file = validated_data.pop('csv_file', None)
+        import_teams(file['path'])
+        import_games(file['path'])
+        return self.instance
 
 
 class TeamSerializer(serializers.ModelSerializer):

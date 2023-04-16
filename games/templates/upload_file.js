@@ -5,7 +5,7 @@
         return {
             actionURL: '{% url "core:import_data" %}',
             form: {
-                csv_file: "",
+
             }
         }
     },
