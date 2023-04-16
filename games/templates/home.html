@@ -58,13 +58,14 @@
                     <tbody name="games">
                         <tr v-for="(game,index) in games" >
                             <td>{(index+1)}</td>
-                            <td><input type="text" v-model="game.team1.name"></td>
+                            <td><input type="text" v-model="game.team1.name" :id="game.pk"></td>
                             <td><input type="text" v-model="game.team1_score"></td>
                             <td><input type="text" v-model="game.team2.name"></td>
                             <td><input type="text" v-model="game.team2_score"></td>
                             <td>
-                                <button type="button" class="btn btn-outline-primary">update</button>
+{#                                <button type="button" class="btn btn-outline-primary" @click="update_game(game.pk")>update</button>#}
                                 <button type="button" class="btn btn-outline-danger" @click="delete_game(game.pk)">delete</button>
+                                <button type="button" class="btn btn-outline-danger" @click="update_game(game.pk)">update</button>
                             </td>
                         </tr>
 
@@ -75,6 +76,32 @@
             <br>
 
                 <button type="submit" class="btn-default">show score</button>
+
+            </div>
+
+             <br>
+            <br>
+            <div style="width: 50%; padding-left: 100px">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#Rank</th>
+                        <th scope="col">Team name</th>
+                        <th scope="col">score</th>
+                    </tr>
+                    </thead>
+                    <validation-provider name="scores"
+                                                 v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
+                                                 class="form-group">
+                    <tbody name="scores">
+
+
+                    </tbody>
+                        <span v-for="error in errors" :key="error" class="info-label">{( error )}</span>
+                    </validation-provider>
+                </table>
+            <br>
+
 
             </div>
         </form>

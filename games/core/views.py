@@ -40,7 +40,7 @@ class HandleUploadView(APIView):
 class GetScoresView(APIView):
     permission_classes = (AllowAny,)
 
-    def post(self, request, **kwargs):
+    def get(self, request, **kwargs):
         return Response(get_score())
 
 

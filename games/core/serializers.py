@@ -52,15 +52,17 @@ class GameSerializer(serializers.ModelSerializer):
             "team2_score"
         )
 
-    def update(self, instance, validated_data):
-        """ update game data, in case of new Team , it will be created then added to game"""
-        # make sure to add only team.name in the front
-        team1_name = validated_data.pop("team1", None)
-        team2_name = validated_data.pop("team2", None)
-        obj1, created = Team.objects.get_or_create(name=team1_name)
-        obj2, created = Team.objects.get_or_create(name=team2_name)
-        instance = super(GameSerializer, self).update(instance, validated_data)
-        instance.team1 = obj1
-        instance.team2 = obj2
-        instance.save()
-        return instance
+    # def update(self, instance, validated_data):
+    #     """ update game data, in case of new Team , it will be created then added to game"""
+    #     # make sure to add only team.name in the front
+    #     print("helllooooo")
+    #     team1_name = validated_data.pop("team1", None)
+    #     team2_name = validated_data.pop("team2", None)
+    #     # obj1, created = Team.objects.get_or_create(name=team1_name)
+    #     # obj2, created = Team.objects.get_or_create(name=team2_name)
+    #     instance = super(GameSerializer, self).update(instance, validated_data)
+    #     # instance.team1 = obj1
+    #     # instance.team2 = obj2
+    #     print(instance)
+    #     instance.save()
+    #     return instance
