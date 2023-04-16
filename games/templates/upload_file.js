@@ -11,7 +11,7 @@
     },
     methods: {
         success(response) {
-            console.log("success")
+            window.location.reload();
         }
     }
 })

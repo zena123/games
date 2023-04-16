@@ -13,10 +13,11 @@
                     <div class="form-group">
                         <label for="name" class="control-label">Upload csv file </label>
                         <div class="col-md-5">
-                            <validation-provider name="csv_file" rules="required"
+                            <validation-provider name="csv_file"
                                                  v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
                                                  class="form-group">
-                                <input type="file" name="csv_file" id="csv_file" class="form-control">
+                                <input type="file" name="csv_file" id="csv_file" class="form-control"
+                                       @change="uploadFile($event, '{{ style.upload_url }}')">
                                 <span v-for="error in errors" :key="error" class="invalid-feedback"
                                       style="display: inline">{( error )}</span>
                             </validation-provider>
@@ -28,57 +29,68 @@
                             <button class="btn btn-primary">Upload</button>
                         </div>
                     </div>
+
                 </form>
             </validation-observer>
+
         </div>
         <br>
 
-        <div>
-            <a href="">
-                <button class="btn-default">show score</button>
-            </a>
+    <div id="getScores" hidden>
             <br>
+        <validation-observer ref="form" v-slot="{ handleSubmit }" mode="lazy">
+        <form @submit.prevent="handleSubmit(submit)" novalidate="true">
             <div style="width: 50%; padding-left: 100px">
-                <table class="table" >
+                <table class="table">
                     <thead>
                     <tr>
-                        <th scope="col">Rank</th>
-                        <th scope="col">Team</th>
-                        <th scope="col">Score</th>
+                        <th scope="col">num</th>
+                        <th scope="col">team one</th>
+                        <th scope="col">team one score</th>
+                        <th scope="col">team two score</th>
+                        <th scope="col">team two score</th>
                         <th scope="col">action</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td><button type="button" class="btn btn-outline-primary">update</button>
-                            <button type="button" class="btn btn-outline-danger">delete</button></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td><button type="button" class="btn btn-outline-primary">update</button>
-                            <button type="button" class="btn btn-outline-danger">delete</button></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td >Larry</td>
-                        <td><input type="text" value="test"></td>
-                        <td><button type="button" class="btn btn-outline-primary">update</button>
-                            <button type="button" class="btn btn-outline-danger">delete</button></td>
-                    </tr>
+                    <validation-provider name="games"
+                                                 v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
+                                                 class="form-group">
+                    <tbody name="games">
+                        <tr v-for="(game,index) in games" >
+                            <td>{(index+1)}</td>
+                            <td><input type="text" v-model="game.team1.name"></td>
+                            <td><input type="text" v-model="game.team1_score"></td>
+                            <td><input type="text" v-model="game.team2.name"></td>
+                            <td><input type="text" v-model="game.team2_score"></td>
+                            <td>
+                                <button type="button" class="btn btn-outline-primary">update</button>
+                                <button type="button" class="btn btn-outline-danger" @click="delete_game(game.pk)">delete</button>
+                            </td>
+                        </tr>
+
                     </tbody>
+                        <span v-for="error in errors" :key="error" class="info-label">{( error )}</span>
+                    </validation-provider>
                 </table>
+            <br>
+
+                <button type="submit" class="btn-default">show score</button>
+
             </div>
+        </form>
+        </validation-observer>
         </div>
+
     </div>
 {% endblock %}
 
 {% block extra_js %}
+<script>
+
+</script>
     <script>
         {% include 'upload_file.js' %}
+        {% include 'get_scores.js' %}
+
     </script>
 {% endblock %}

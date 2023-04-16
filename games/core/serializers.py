@@ -25,7 +25,7 @@ class HandleUploadSerializer(serializers.Serializer):
         file = validated_data.pop('csv_file', None)
         import_teams(file['path'])
         import_games(file['path'])
-        return self.instance
+        return file
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -33,7 +33,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        Fields = ('pk', 'name',)
+        fields = ('pk', 'name',)
         read_only_fields = ('pk',)
 
 
@@ -47,8 +47,8 @@ class GameSerializer(serializers.ModelSerializer):
         fields = (
             "pk",
             "team1",
-            "team2",
             "team1_score",
+            "team2",
             "team2_score"
         )
 

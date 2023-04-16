@@ -1,4 +1,5 @@
 import pandas as pd
+from collections import OrderedDict
 from .models import Team, Game
 
 
@@ -43,15 +44,18 @@ def import_games(file):
 # this function will be removed or used in a view
 def get_score():
     teams = Team.objects.all()
-    scores = dict.fromkeys(teams, 0)
+    names = [team.name for team in teams]
+    scores = dict.fromkeys(names, 0)
     games = Game.objects.all()
     for game in games:
         if game.team1_score == game.team2_score:
-            scores[game.team1] += 1
-            scores[game.team2] += 1
+            scores[game.team1.name] += 1
+            scores[game.team2.name] += 1
         elif game.team1_score > game.team2_score:
-            scores[game.team1] += 3
+            scores[game.team1.name] += 3
         else:
-            scores[game.team2] += 3
+            scores[game.team2.name] += 3
 
-    return scores
+    sorted_scores = OrderedDict(sorted(scores.items(), key=lambda v: v, reverse=True))
+
+    return sorted_scores
