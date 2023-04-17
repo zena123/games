@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", HomeTemplateView.as_view(),name="home"),
     path("core/", include('core.urls', namespace="core")),
+    path("user/", include('user.urls', namespace="user")),
 ]
 
 urlpatterns += [

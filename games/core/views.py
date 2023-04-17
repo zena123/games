@@ -53,5 +53,7 @@ class GetGamesView(
     """generic viewset for games model"""
 
     queryset = Game.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = GameSerializer
+
+
