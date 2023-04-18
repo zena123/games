@@ -1,5 +1,6 @@
 import csv
 import os
+import tempfile
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -7,7 +8,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from .models import Team, Game
+
+from .models import Game, Team
 
 User = get_user_model()
 
@@ -21,12 +23,7 @@ def create_sample_team(name="test_name"):
 def create_sample_game(**params):
     team1 = create_sample_team("test1")
     team2 = create_sample_team("test2")
-    defaults = {
-        "team1": team1,
-        "team1_score": 3,
-        "team2": team2,
-        "team2_score": 4
-    }
+    defaults = {"team1": team1, "team1_score": 3, "team2": team2, "team2_score": 4}
     defaults.update(params)
     return Game.objects.create(**defaults)
 
@@ -59,25 +56,22 @@ class TestPublicGames(TestCase):
         self.client = APIClient()
 
     def test_auth_required(self):
-        """ test that authentication is required """
+        """test that authentication is required"""
         game = create_sample_game()
-        payload = {
-            "team1_score": 4,
-            "team2_score": 3
-        }
+        payload = {"team1_score": 4, "team2_score": 3}
         res = self.client.delete(details_url(game.pk))
         res2 = self.client.put(details_url(game.pk), payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(res2.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_retrieve_games(self):
-        """test that anonymous user can call list EP """
+        """test that anonymous user can call list EP"""
         res = self.client.get(reverse("core:games-list"))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
 
 class TestPrivateGames(TestCase):
-    """test authentication is required """
+    """test authentication is required"""
 
     def setUp(self):
         self.client = APIClient()
@@ -86,10 +80,7 @@ class TestPrivateGames(TestCase):
 
     def test_update_game(self):
         """test updating game wih authentication successful"""
-        payload = {
-            "team1_score": 5,
-            "team2_score": 4
-        }
+        payload = {"team1_score": 5, "team2_score": 4}
         game = create_sample_game()
         self.client.patch(details_url(game.pk), payload)
         game.refresh_from_db()
@@ -110,24 +101,18 @@ class TestPrivateGames(TestCase):
 class TestUploadFile(TestCase):
     """test file is being uploaded"""
 
-    def setUP(self):
+    def setUp(self):
         self.client = APIClient()
 
     def test_file_upload_valid(self):
-        file_name = "test_data.csv"
-        with open(file_name, "w") as file:
-            writer = csv.writer(file)
-            # Add some rows in csv file
-            writer.writerow(["team1",4, "team2",5])
-        data = open(file_name, "rb")
-        # import pdb;
-        # pdb.set_trace()
-        # Create a simple uploaded file
-        data = SimpleUploadedFile(
-            content=data.read(), name=data.name, content_type="text/csv"
-        )
-        res = self.client.post(reverse("core:import_data"),{"csv_file":data})
-        print("xxx")
-
-
-
+        with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as f:
+            # Write some data to the file
+            f.write(b"team1, 10, team2, 1")
+            file_path = f.name
+            data = {
+                "filename": "file",
+                "path": file_path,
+            }
+        res = self.client.post(reverse("core:import_data"), {"csv_file": data}, format="json")
+        self.assertEqual(2, Team.objects.count())
+        os.remove(file_path)
