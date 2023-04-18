@@ -1,4 +1,8 @@
+import csv
+import os
+
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -101,3 +105,29 @@ class TestPrivateGames(TestCase):
         self.assertEqual(len(games), 1)
         self.assertNotIn(game1, games)
         self.assertIn(game2, games)
+
+
+class TestUploadFile(TestCase):
+    """test file is being uploaded"""
+
+    def setUP(self):
+        self.client = APIClient()
+
+    def test_file_upload_valid(self):
+        file_name = "test_data.csv"
+        with open(file_name, "w") as file:
+            writer = csv.writer(file)
+            # Add some rows in csv file
+            writer.writerow(["team1",4, "team2",5])
+        data = open(file_name, "rb")
+        # import pdb;
+        # pdb.set_trace()
+        # Create a simple uploaded file
+        data = SimpleUploadedFile(
+            content=data.read(), name=data.name, content_type="text/csv"
+        )
+        res = self.client.post(reverse("core:import_data"),{"csv_file":data})
+        print("xxx")
+
+
+
