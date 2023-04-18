@@ -1,35 +1,28 @@
-from django.shortcuts import render
 from django.views.generic import TemplateView
 from djvue.views import FileUploadView
 from rest_framework import status, viewsets
-from rest_framework.mixins import ListModelMixin, UpdateModelMixin, DestroyModelMixin
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.mixins import DestroyModelMixin, ListModelMixin, UpdateModelMixin
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import (
-    CSVUploadSerializer,
-    HandleUploadSerializer,
-    GameSerializer,
-)
 from .helper_functions import get_score
 from .models import Game
-
-
-class CSVUploadView(FileUploadView):
-    """add a view to for uploading a csv file"""
-    serializer_class = CSVUploadSerializer
+from .serializers import CSVUploadSerializer, GameSerializer, HandleUploadSerializer
 
 
 class HomeTemplateView(TemplateView):
-    """ add template view to show homepage when running project"""
-    template_name = 'home.html'
+    template_name = "home.html"
+
+
+class CSVUploadView(FileUploadView):
+    serializer_class = CSVUploadSerializer
 
 
 class HandleUploadView(APIView):
     permission_classes = (AllowAny,)
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         serializer = HandleUploadSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -50,10 +43,6 @@ class GetGamesView(
     DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
-    """generic viewset for games model"""
-
     queryset = Game.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = GameSerializer
-
-
