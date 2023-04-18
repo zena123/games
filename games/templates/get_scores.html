@@ -1,0 +1,25 @@
+<div style="width: 50%; padding-left: 100px">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">Team</th>
+            <th scope="col">Score</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for score in scores %}
+        <tr>
+            <th scope="row">#{{ forloop.counter }}</th>
+            <td>score</td>
+            <td>nn</td>
+        <td>
+                <button type="button" class="btn btn-outline-primary">update</button>
+                <button type="button" class="btn btn-outline-danger">delete</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,6 @@
+Django==3.2
+
+djvue==0.2.1
+djangorestframework==3.14.0
+django-bootstrap-v5==1.0.11
+pandas==2.0.0

@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div id="app" hidden>
+        <div class="text">
+            welcome
+        </div>
+        <br>
+        <div class="form-control" id="fileUpload">
+            <validation-observer ref="form" v-slot="{ handleSubmit }" mode="lazy">
+                <form @submit.prevent="handleSubmit(submit)" novalidate="true" method=POST enctype=multipart/form-data>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="name" class="control-label">Upload csv file </label>
+                        <div class="col-md-5">
+                            <validation-provider name="csv_file"
+                                                 v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
+                                                 class="form-group"
+                            >
+                                <input type="file" name="csv_file" id="csv_file" class="form-control"
+                                       accept=".csv, text/csv"
+                                       @change="uploadFile($event, '{% url 'core:csv_upload' %}')">
+                                <span v-for="error in errors" :key="error" class="invalid-feedback"
+                                      style="display: inline">{( error )}</span>
+                            </validation-provider>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3 col-sm-3 col-xs-12 col-md-offset-3" style="margin-bottom:10px;">
+                            <br>
+                            <button class="btn btn-primary">Upload</button>
+                        </div>
+                    </div>
+
+                </form>
+            </validation-observer>
+
+        </div>
+        <br>
+
+        <div id="getScores">
+            <br>
+            <div style="width: 50%; padding-left: 100px">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">num</th>
+                        <th scope="col">team one</th>
+                        <th scope="col">team one score</th>
+                        <th scope="col">team two</th>
+                        <th scope="col">team two score</th>
+                        <th scope="col">action</th>
+                    </tr>
+                    </thead>
+                    <tbody name="games">
+                    <tr v-for="(game,index) in games" :key="game.pk">
+                        <td>{(index+1)}</td>
+                        <td><input type="text" v-model="game.team1.name"></td>
+                        <td><input type="text" v-model="game.team1_score"></td>
+                        <td><input type="text" v-model="game.team2.name"></td>
+                        <td><input type="text" v-model="game.team2_score"></td>
+                        <td>
+                            {#                                <button type="button" class="btn btn-outline-primary" @click="update_game(game.pk")>update</button>#}
+                            <button type="button" class="btn btn-outline-danger" @click="delete_game(game.pk)">delete
+                            </button>
+                            <button type="button" class="btn btn-outline-danger" @click="update_game(game.pk)">update
+                            </button>
+                        </td>
+                    </tr>
+                    {% if request.user.is_authenticated %}
+                    <tr>
+                        <td>Add Game:</td>
+                        <td><input type="text" v-model="add_form.team1.name"></td>
+                        <td><input type="text" v-model="add_form.team1_score"></td>
+                        <td><input type="text" v-model="add_form.team2.name"></td>
+                        <td><input type="text" v-model="add_form.team2_score"></td>
+                        <td>
+                            <button type="button" class="btn btn-outline-success" @click="add_game">Add</button>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    </tbody>
+                </table>
+                <button v-if="previousGamesURL" @click="fetch_games(previousGamesURL)" class="btn btn-primary">
+                    Previous
+                </button>
+                <button v-if="nextGamesURL" @click="fetch_games(nextGamesURL)" class="btn btn-primary">Next</button>
+
+
+                <button type="submit" class="btn-default btn btn-success" @click="fetch_scores">show score</button>
+
+            </div>
+
+            <br>
+            <br>
+            <div style="width: 50%; padding-left: 100px">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#Rank</th>
+                        <th scope="col">Team name</th>
+                        <th scope="col">score</th>
+                    </tr>
+                    </thead>
+                    <tbody name="scores">
+                    <tr v-for="(score, index) in scores" :key="index">
+                        <th>#{(index + 1)}</th>
+                        <td>{(score.name)}</td>
+                        <td>{(score.score)}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br>
+
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+
+    </script>
+    <script>
+        {% include 'app.js' %}
+    </script>
+{% endblock %}
