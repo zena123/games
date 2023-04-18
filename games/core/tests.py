@@ -69,6 +69,31 @@ class TestPublicGames(TestCase):
         res = self.client.get(reverse("core:games-list"))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
+    def test_calculate_score(self):
+        """test correct score calculation"""
+        team1 = create_sample_team(name="team1")
+        team2 = create_sample_team(name="team2")
+        params1 = {
+            "team1": team1,
+            "team1_score":3,
+            "team2": team2,
+            "team2_score":3
+        }
+        params2 = {
+            "team1": team1,
+            "team1_score": 4,
+            "team2": team2,
+            "team2_score": 2
+        }
+        create_sample_game(**params1)
+        create_sample_game(**params2)
+        res = self.client.get(reverse("core:get_scores"))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data[0]['name'], 'team1')
+        self.assertEqual(res.data[1]['name'], 'team2')
+        self.assertEqual(res.data[0]['score'], 4)
+        self.assertEqual(res.data[1]['score'], 1)
+
 
 class TestPrivateGames(TestCase):
     """test authentication is required"""
@@ -77,6 +102,22 @@ class TestPrivateGames(TestCase):
         self.client = APIClient()
         self.user = User.objects.create(username="test_user", password="test123")
         self.client.force_authenticate(self.user)
+
+    def test_create_game(self):
+        """test creating game with authentication successful"""
+        payload = {"team1_score": 5, "team2_score": 4, "team1": {"name": "test1"}, "team2": {"name": "test2"}}
+        response = self.client.post(reverse("core:games-list"), payload, format="json")
+        team1 = Team.objects.filter(name="test1").first()
+        self.assertIsNotNone(team1)
+        team2 = Team.objects.filter(name="test2").first()
+        self.assertIsNotNone(team2)
+        game = Game.objects.filter(
+            team1=team1,
+            team1_score=5,
+            team2=team2,
+            team2_score=4,
+        ).first()
+        self.assertIsNotNone(game)
 
     def test_update_game(self):
         """test updating game wih authentication successful"""
