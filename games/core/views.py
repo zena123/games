@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 from djvue.views import FileUploadView
 from rest_framework import status, viewsets
-from rest_framework.mixins import DestroyModelMixin, ListModelMixin, UpdateModelMixin
+from rest_framework.mixins import DestroyModelMixin, ListModelMixin, UpdateModelMixin, CreateModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -38,6 +38,7 @@ class GetScoresView(APIView):
 
 
 class GetGamesView(
+    CreateModelMixin,
     ListModelMixin,
     UpdateModelMixin,
     DestroyModelMixin,

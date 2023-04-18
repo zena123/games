@@ -55,7 +55,7 @@
                     <tbody name="games">
                     <tr v-for="(game,index) in games" :key="game.pk">
                         <td>{(index+1)}</td>
-                        <td><input type="text" v-model="game.team1.name" :id="game.pk"></td>
+                        <td><input type="text" v-model="game.team1.name"></td>
                         <td><input type="text" v-model="game.team1_score"></td>
                         <td><input type="text" v-model="game.team2.name"></td>
                         <td><input type="text" v-model="game.team2_score"></td>
@@ -67,6 +67,18 @@
                             </button>
                         </td>
                     </tr>
+                    {% if request.user.is_authenticated %}
+                    <tr>
+                        <td>Add Game:</td>
+                        <td><input type="text" v-model="add_form.team1.name"></td>
+                        <td><input type="text" v-model="add_form.team1_score"></td>
+                        <td><input type="text" v-model="add_form.team2.name"></td>
+                        <td><input type="text" v-model="add_form.team2_score"></td>
+                        <td>
+                            <button type="button" class="btn btn-outline-success" @click="add_game">Add</button>
+                        </td>
+                    </tr>
+                    {% endif %}
 
                     </tbody>
                 </table>

@@ -9,7 +9,17 @@ let AppScore = new Vue({
             nextGamesURL: null,
             previousGamesURL: null,
             scores: [],
-            form: {}
+            form: {},
+            add_form: {
+                team1: {
+                    name: "",
+                },
+                team1_score: 0,
+                team2: {
+                    name: "",
+                },
+                team2_score: 0,
+            },
         }
     },
     created: function () {
@@ -35,17 +45,37 @@ let AppScore = new Vue({
                     this.scores = response.data
                 })
         },
+        add_game: function () {
+            axios.post("{% url 'core:games-list' %}", this.add_form)
+                .then(response => {
+                    this.reset_add_form();
+                    this.success();
+                })
+                .catch(this.error)
+        },
+        reset_add_form: function () {
+            this.add_form = {
+                team1: {
+                    name: "",
+                },
+                team1_score: 0,
+                team2: {
+                    name: "",
+                },
+                team2_score: 0,
+            };
+        },
         delete_game: function (pk) {
             axios.delete("{% url 'core:games-detail' 0 %}".replace(0, pk))
                 .then(response => {
-                    this.fetch_games();
+                    this.success();
                 })
         },
         update_game: function (pk) {
             let data = this.games.filter(game => game.pk === pk)[0]
             axios.patch("{% url 'core:games-detail' 0 %}".replace(0, pk), data)
                 .then(response => {
-                    this.fetch_games();
+                    this.success();
                 })
         },
     }

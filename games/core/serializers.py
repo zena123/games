@@ -29,7 +29,7 @@ class HandleUploadSerializer(serializers.Serializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    pk = serializers.IntegerField()
+    pk = serializers.IntegerField(required=False)
     name = (
         serializers.CharField()
     )  # disable the validation since it's nested and unique will cause issues
@@ -55,6 +55,17 @@ class GameSerializer(serializers.ModelSerializer):
             "team2",
             "team2_score",
         )
+
+    def create(self, validated_data):
+        """update game data, in case of new Team """
+        team1 = validated_data.pop("team1", None)
+        team2 = validated_data.pop("team2", None)
+        team1, created = Team.objects.get_or_create(name=team1["name"])
+        team2, created = Team.objects.get_or_create(name=team2["name"])
+        validated_data["team1"] = team1
+        validated_data["team2"] = team2
+        instance = super(GameSerializer, self).create(validated_data)
+        return instance
 
     def update(self, instance, validated_data):
         """update game data, in case of new Team """
