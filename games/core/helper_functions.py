@@ -1,10 +1,12 @@
-import pandas as pd
 from collections import OrderedDict
-from .models import Team, Game
+
+import pandas as pd
+
+from .models import Game, Team
 
 
 def import_teams(file):
-    """ add teams to Team model"""
+    """add teams to Team model"""
     df = pd.read_csv(file, header=None)
     """result csv is:
                     0  1          2  3
@@ -27,24 +29,19 @@ def import_teams(file):
 
 
 def import_games(file):
-    """ import data to games model, duplicated data will be treated as new raws"""
+    """import data to games model, duplicated data will be treated as new raws"""
     df = pd.read_csv(file, header=None)
     # first game is the columns
     for i, row in df.iterrows():
         team1 = Team.objects.get(name=row[0])
         team2 = Team.objects.get(name=row[2])
         Game.objects.create(
-            team1=team1,
-            team1_score=row[1],
-            team2=team2,
-            team2_score=row[3]
+            team1=team1, team1_score=row[1], team2=team2, team2_score=row[3]
         )
 
 
-# this function will be removed or used in a view
 def get_score():
-    teams = Team.objects.all()
-    names = [team.name for team in teams]
+    names = list(Team.objects.values_list("name", flat=True))
     scores = dict.fromkeys(names, 0)
     games = Game.objects.all()
     for game in games:
@@ -56,6 +53,8 @@ def get_score():
         else:
             scores[game.team2.name] += 3
 
-    sorted_scores = OrderedDict(sorted(scores.items(), key=lambda v: v, reverse=True))
-
-    return sorted_scores
+    results = []
+    for team_name, score in scores.items():
+        results.append({"name": team_name, "score": score})
+    results = sorted(results, key=lambda x: x["score"], reverse=True)
+    return results

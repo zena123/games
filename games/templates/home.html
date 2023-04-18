@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div>
+    <div id="app" hidden>
         <div class="text">
             welcome
         </div>
@@ -15,9 +15,11 @@
                         <div class="col-md-5">
                             <validation-provider name="csv_file"
                                                  v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
-                                                 class="form-group">
+                                                 class="form-group"
+                            >
                                 <input type="file" name="csv_file" id="csv_file" class="form-control"
-                                       @change="uploadFile($event, '{{ style.upload_url }}')">
+                                       accept=".csv, text/csv"
+                                       @change="uploadFile($event, '{% url 'core:csv_upload' %}')">
                                 <span v-for="error in errors" :key="error" class="invalid-feedback"
                                       style="display: inline">{( error )}</span>
                             </validation-provider>
@@ -36,10 +38,8 @@
         </div>
         <br>
 
-    <div id="getScores" hidden>
+        <div id="getScores">
             <br>
-        <validation-observer ref="form" v-slot="{ handleSubmit }" mode="lazy">
-        <form @submit.prevent="handleSubmit(submit)" novalidate="true">
             <div style="width: 50%; padding-left: 100px">
                 <table class="table">
                     <thead>
@@ -47,39 +47,40 @@
                         <th scope="col">num</th>
                         <th scope="col">team one</th>
                         <th scope="col">team one score</th>
-                        <th scope="col">team two score</th>
+                        <th scope="col">team two</th>
                         <th scope="col">team two score</th>
                         <th scope="col">action</th>
                     </tr>
                     </thead>
-                    <validation-provider name="games"
-                                                 v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
-                                                 class="form-group">
                     <tbody name="games">
-                        <tr v-for="(game,index) in games" >
-                            <td>{(index+1)}</td>
-                            <td><input type="text" v-model="game.team1.name" :id="game.pk"></td>
-                            <td><input type="text" v-model="game.team1_score"></td>
-                            <td><input type="text" v-model="game.team2.name"></td>
-                            <td><input type="text" v-model="game.team2_score"></td>
-                            <td>
-{#                                <button type="button" class="btn btn-outline-primary" @click="update_game(game.pk")>update</button>#}
-                                <button type="button" class="btn btn-outline-danger" @click="delete_game(game.pk)">delete</button>
-                                <button type="button" class="btn btn-outline-danger" @click="update_game(game.pk)">update</button>
-                            </td>
-                        </tr>
+                    <tr v-for="(game,index) in games" :key="game.pk">
+                        <td>{(index+1)}</td>
+                        <td><input type="text" v-model="game.team1.name" :id="game.pk"></td>
+                        <td><input type="text" v-model="game.team1_score"></td>
+                        <td><input type="text" v-model="game.team2.name"></td>
+                        <td><input type="text" v-model="game.team2_score"></td>
+                        <td>
+                            {#                                <button type="button" class="btn btn-outline-primary" @click="update_game(game.pk")>update</button>#}
+                            <button type="button" class="btn btn-outline-danger" @click="delete_game(game.pk)">delete
+                            </button>
+                            <button type="button" class="btn btn-outline-danger" @click="update_game(game.pk)">update
+                            </button>
+                        </td>
+                    </tr>
 
                     </tbody>
-                        <span v-for="error in errors" :key="error" class="info-label">{( error )}</span>
-                    </validation-provider>
                 </table>
-            <br>
+                <button v-if="previousGamesURL" @click="fetch_games(previousGamesURL)" class="btn btn-primary">
+                    Previous
+                </button>
+                <button v-if="nextGamesURL" @click="fetch_games(nextGamesURL)" class="btn btn-primary">Next</button>
 
-                <button type="submit" class="btn-default">show score</button>
+
+                <button type="submit" class="btn-default btn btn-success" @click="fetch_scores">show score</button>
 
             </div>
 
-             <br>
+            <br>
             <br>
             <div style="width: 50%; padding-left: 100px">
                 <table class="table">
@@ -90,34 +91,28 @@
                         <th scope="col">score</th>
                     </tr>
                     </thead>
-                    <validation-provider name="scores"
-                                                 v-slot="{ errors, valid, invalid, validated, touched }" tag="div"
-                                                 class="form-group">
                     <tbody name="scores">
-
-
+                    <tr v-for="(score, index) in scores" :key="index">
+                        <th>#{(index + 1)}</th>
+                        <td>{(score.name)}</td>
+                        <td>{(score.score)}</td>
+                    </tr>
                     </tbody>
-                        <span v-for="error in errors" :key="error" class="info-label">{( error )}</span>
-                    </validation-provider>
                 </table>
-            <br>
+                <br>
 
 
             </div>
-        </form>
-        </validation-observer>
         </div>
 
     </div>
 {% endblock %}
 
 {% block extra_js %}
-<script>
-
-</script>
     <script>
-        {% include 'upload_file.js' %}
-        {% include 'get_scores.js' %}
 
+    </script>
+    <script>
+        {% include 'app.js' %}
     </script>
 {% endblock %}
